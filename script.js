@@ -1,7 +1,7 @@
 const player = document.querySelector('.player');
-const video = player.querySelector('.viewer');
+const video = player.querySelector('.player__video');
 const toggle = player.querySelector('.toggle');
-const skipButtons = player.querySelectorAll('.skip');
+const skipButtons = player.querySelectorAll('[data-skip]');
 const sliders = player.querySelectorAll('.player__slider');
 const progress = player.querySelector('.progress');
 const progressBar = player.querySelector('.progress__filled');
@@ -11,27 +11,26 @@ function togglePlay() {
   video.paused ? video.play() : video.pause();
 }
 
-function updateButton() {
+function updateToggleButton() {
   toggle.textContent = video.paused ? '►' : '❚ ❚';
 }
 
-// Skip buttons
+// Skip time
 function skip() {
   video.currentTime += parseFloat(this.dataset.skip);
 }
 
-// Handle volume and playback speed
-function handleSliderUpdate() {
+// Volume & playback speed
+function handleSlider() {
   video[this.name] = this.value;
 }
 
-// Update progress bar
-function handleProgress() {
+// Progress bar
+function updateProgress() {
   const percent = (video.currentTime / video.duration) * 100;
   progressBar.style.width = `${percent}%`;
 }
 
-// Scrub through video
 function scrub(e) {
   const scrubTime = (e.offsetX / progress.offsetWidth) * video.duration;
   video.currentTime = scrubTime;
@@ -39,14 +38,13 @@ function scrub(e) {
 
 // Event listeners
 video.addEventListener('click', togglePlay);
-video.addEventListener('play', updateButton);
-video.addEventListener('pause', updateButton);
-video.addEventListener('timeupdate', handleProgress);
+video.addEventListener('play', updateToggleButton);
+video.addEventListener('pause', updateToggleButton);
+video.addEventListener('timeupdate', updateProgress);
 
 toggle.addEventListener('click', togglePlay);
-
 skipButtons.forEach(button => button.addEventListener('click', skip));
-sliders.forEach(slider => slider.addEventListener('input', handleSliderUpdate));
+sliders.forEach(slider => slider.addEventListener('input', handleSlider));
 
 let mousedown = false;
 progress.addEventListener('click', scrub);
